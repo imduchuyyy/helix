@@ -1,12 +1,6 @@
-use clap::Parser;
 
-#[derive(Parser)]
-struct Args {
-    #[arg(short, long)]
-    name: String,
-}
+mod keyring;
 
 fn main() {
-    let args = Args::parse();
-    println!("Hello, {}!", args.name);
+    let keyring_service = keyring::Keyring::new("/.crypto-lite".to_string());
 }
