@@ -8,18 +8,23 @@ import (
 )
 
 func main() {
-
 	app := cli.NewCli()
 	app.SetPrompt("Enter entropy to generate wallet > ")
-
 	entropy, ok := app.AskEntropy()
 	if !ok {
 		return
 	}
-	fmt.Println(entropy)
-	keyring := keyring.New(entropy)
-	address := keyring.GetEVMAddress()
-	fmt.Println("Generated EVM Address:", address.Hex())
+	keyring, err := keyring.New(entropy)
+	if err != nil {
+		fmt.Println("Error creating keyring:", err)
+		return
+	}
+	address, err := keyring.GetEVMAddress()
+	if err != nil {
+		fmt.Println("Error generating EVM address:", err)
+		return
+	}
+	fmt.Println("Login to Address:", address.Hex())
 	app.RegisterCommands(keyring.Commands())
 
 	app.SetPrompt("Helix > ")

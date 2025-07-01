@@ -27,7 +27,7 @@ func NewCli() *Cli {
 		scanner:    bufio.NewScanner(os.Stdin),
 		commands:   make(map[string]types.Command),
 		prompt:     "> ",
-		welcomeMsg: "helix-wallet CLI - Interactive Mode\nType 'help' to see available commands.",
+		welcomeMsg: "Helix-wallet CLI - \nType 'help' to see available commands.",
 	}
 
 	// Register built-in help command

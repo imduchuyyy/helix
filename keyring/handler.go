@@ -1,5 +1,9 @@
 package keyring
 
-func (w *Keyring) handleCreateWallet(args []string) (string, error) {
-	return "Wallet created successfully", nil
+func (k *Keyring) handleGetAddress(args []string) (string, error) {
+	address, err := k.GetEVMAddress()
+	if err != nil {
+		return "", err
+	}
+	return address.Hex(), nil
 }

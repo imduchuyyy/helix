@@ -1,6 +1,7 @@
 package keyring
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -9,27 +10,33 @@ import (
 )
 
 type Keyring struct {
-	entropy string
+	privateKey *ecdsa.PrivateKey
 }
 
-func New(entropy string) *Keyring {
-	return &Keyring{
-		entropy: entropy,
+func New(entropy string) (*Keyring, error) {
+	seed := crypto.Keccak256([]byte(entropy + "evm" + "helix-wallet"))
+
+	privateKey, err := crypto.ToECDSA(seed)
+	if err != nil {
+		fmt.Println("Error generating private key:", err)
+		return nil, err
 	}
+
+	return &Keyring{
+		privateKey: privateKey,
+	}, nil
 }
 
-func (w *Keyring) GetEVMAddress() common.Address {
-	seed := crypto.Keccak256([]byte(w.entropy + "evm" + "helix-wallet"))
-	fmt.Println("Seed:", common.BytesToHash(seed).String())
-	return common.Address{}
+func (k *Keyring) GetEVMAddress() (common.Address, error) {
+	return crypto.PubkeyToAddress(k.privateKey.PublicKey), nil
 }
 
-func (w *Keyring) Commands() []types.Command {
+func (k *Keyring) Commands() []types.Command {
 	return []types.Command{
 		{
-			Name:        "create",
-			Description: "Create a new wallet",
-			Handler:     w.handleCreateWallet,
+			Name:        "address",
+			Description: "Get Address",
+			Handler:     k.handleGetAddress,
 		},
 	}
 }
