@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/imduchuyyy/helix-wallet/actions"
 	"github.com/imduchuyyy/helix-wallet/cli"
 	"github.com/imduchuyyy/helix-wallet/keyring"
 )
@@ -25,7 +26,10 @@ func main() {
 		return
 	}
 	fmt.Println("Login to Address:", address.Hex())
+
+	action := actions.New(keyring)
 	app.RegisterCommands(keyring.Commands())
+	app.RegisterCommands(action.Commands())
 
 	app.SetPrompt("Helix > ")
 
