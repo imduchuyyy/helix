@@ -1,9 +1,9 @@
-# Crypto Lite
-A lightweight cryptocurrency wallet on the command line. This tool helps you to create wallet, receive crypto, store it securely, and send it to others. It is designed to be simple and easy to use, with a focus on security.
+# Helix wallet
+Entropy wallet, Generate wallets based on your custom entropy. No more scared of losing your seed phrase!
 
 ## ✨ Features
-- Ethereum wallet on the command line
-- Smart wallet (password recovery, multi-signers, token gas etc.)
+- Generate wallets from custom entropy
+- Transfer assets
 
 ## 🤝 Contributing
 Contributions are welcome! ✨

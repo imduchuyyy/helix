@@ -40,3 +40,11 @@ func (k *Keyring) Commands() []types.Command {
 		},
 	}
 }
+
+func (k *Keyring) handleGetAddress(args []string) (string, error) {
+	address, err := k.GetEVMAddress()
+	if err != nil {
+		return "", err
+	}
+	return address.Hex(), nil
+}
