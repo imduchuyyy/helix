@@ -20,21 +20,28 @@ type balanceOutput struct {
 	Balance *big.Int
 }
 
-func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address ethcommon.Address) ([]types.TokenWithBalance, error) {
+func (a *Action) fetchTokenList(tokenListRpc string) ([]types.Token, error) {
 	response, err := http.Get(tokenListRpc)
 	if err != nil {
 		return nil, err
 	}
 
 	body, err := io.ReadAll(response.Body)
-
 	if err != nil {
 		return nil, err
 	}
 
 	var tokenList []types.Token
+	err = json.Unmarshal(body, &tokenList)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling token list: %w", err)
+	}
 
-	err = json.Unmarshal([]byte(string(body)), &tokenList)
+	return tokenList, nil
+}
+
+func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address ethcommon.Address) ([]types.TokenWithBalance, error) {
+	tokenList, err := a.fetchTokenList(tokenListRpc)
 	if err != nil {
 		return nil, err
 	}

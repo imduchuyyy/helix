@@ -1,7 +1,6 @@
 package keyring
 
 import (
-	"crypto/ecdsa"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -10,25 +9,25 @@ import (
 )
 
 type Keyring struct {
-	privateKey *ecdsa.PrivateKey
+	entropy string
 }
 
 func New(entropy string) (*Keyring, error) {
-	seed := crypto.Keccak256([]byte(entropy + "evm" + "helix-wallet"))
-
-	privateKey, err := crypto.ToECDSA(seed)
-	if err != nil {
-		fmt.Println("Error generating private key:", err)
-		return nil, err
-	}
-
 	return &Keyring{
-		privateKey: privateKey,
+		entropy: entropy,
 	}, nil
 }
 
 func (k *Keyring) GetEVMAddress() (common.Address, error) {
-	return crypto.PubkeyToAddress(k.privateKey.PublicKey), nil
+	seed := crypto.Keccak256([]byte(k.entropy + "evm" + "helix-wallet"))
+
+	privateKey, err := crypto.ToECDSA(seed)
+	if err != nil {
+		fmt.Println("Error generating private key:", err)
+		return common.Address{}, err
+	}
+
+	return crypto.PubkeyToAddress(privateKey.PublicKey), nil
 }
 
 func (k *Keyring) Commands() []types.Command {
@@ -37,6 +36,11 @@ func (k *Keyring) Commands() []types.Command {
 			Name:        "address",
 			Description: "Get Address",
 			Handler:     k.handleGetAddress,
+		},
+		{
+			Name:        "private-key",
+			Description: "Get Private Key",
+			Handler:     k.handleGetPrivateKey,
 		},
 	}
 }
@@ -47,4 +51,12 @@ func (k *Keyring) handleGetAddress(args []string) (string, error) {
 		return "", err
 	}
 	return address.Hex(), nil
+}
+
+func (k *Keyring) handleGetPrivateKey(args []string) (string, error) {
+	seed := crypto.Keccak256([]byte(k.entropy + "evm" + "helix-wallet"))
+
+	fmt.Println(common.Bytes2Hex(seed))
+
+	return "", nil
 }
