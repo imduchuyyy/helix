@@ -7,3 +7,8 @@ type Token struct {
 	Decimals int    `json:"decimals"`
 	ChainId  int    `json:"chainId"`
 }
+
+type TokenWithBalance struct {
+	Detail  Token  `json:"token"`
+	Balance string `json:"balance"`
+}

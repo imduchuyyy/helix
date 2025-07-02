@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 
+	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/imduchuyyy/helix-wallet/common"
 	"github.com/imduchuyyy/helix-wallet/keyring"
 	"github.com/imduchuyyy/helix-wallet/types"
@@ -27,7 +28,7 @@ func (a *Action) Commands() []types.Command {
 		},
 		{
 			Name:        "balance",
-			Description: "All balances on [network]",
+			Description: "All balances on [network]. Example: balance eth",
 			Handler:     a.handleBalance,
 		},
 	}
@@ -46,13 +47,21 @@ func (a *Action) handleBalance(args []string) (string, error) {
 		return "", fmt.Errorf("network %s not supported", args[0])
 	}
 
-	tokenList, err := a.fetchTokenList(chain.TokenListURL)
+	fmt.Printf("Fetching balances for network: %s\n", chain.Name)
 
+	// address, err := a.keyring.GetEVMAddress()
+	// if err != nil {
+	// 	return "", fmt.Errorf("failed to get EVM address: %w", err)
+	// }
+
+	tokenWithBalance, err := a.fetchTokenBalances(chain.TokenListURL, chain.Rpcs[0], ethcommon.HexToAddress("0x4fff0f708c768a46050f9b96c46c265729d1a62f"))
 	if err != nil {
 		return "", fmt.Errorf("failed to fetch token list: %w", err)
 	}
 
-	fmt.Println("Fetched token list:", tokenList)
+	for _, token := range tokenWithBalance {
+		fmt.Printf("Token: %s, Balance: %s\n", token.Detail.Symbol, token.Balance)
+	}
 
-	return "Balance token", nil
+	return "", nil
 }
