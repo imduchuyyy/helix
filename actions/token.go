@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/forta-network/go-multicall"
 	"github.com/imduchuyyy/helix-wallet/common"
 	"github.com/imduchuyyy/helix-wallet/types"
@@ -68,15 +69,37 @@ func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address 
 	var wg sync.WaitGroup
 	var callErrors []error
 
+	// Start a goroutine to fetch ETH balance in parallel with token balances
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		client, err := ethclient.Dial(rpcUrl)
+		if err != nil {
+			fmt.Println("failed to get ETH client:", err.Error())
+			return
+		}
+
+		balance, err := client.BalanceAt(context.Background(), address, nil)
+		if err != nil {
+			fmt.Println("failed to fetch ETH balance:", err.Error())
+			return
+		}
+
+		if balance.Cmp(big.NewInt(0)) > 0 {
+			// If ETH balance is greater than 0, add it to the filtered tokens
+			filteredTokens = append(filteredTokens, types.TokenWithBalance{
+				Detail:  types.Token{Address: common.ZERO_ADDRESS.String(), Symbol: "ETH", Name: "Ether", Decimals: 18},
+				Balance: balance,
+			})
+		}
+	}()
+
 	for i := 0; i < len(contractCalls); i += batchSize {
 		wg.Add(1)
 		go func(startIdx int) {
 			defer wg.Done()
 
-			end := startIdx + batchSize
-			if end > len(contractCalls) {
-				end = len(contractCalls)
-			}
+			end := min(startIdx+batchSize, len(contractCalls))
 
 			batchCalls, err := caller.Call(nil, contractCalls[startIdx:end]...)
 			if err != nil {
@@ -93,7 +116,7 @@ func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address 
 					tokenIndex := startIdx + i
 					newToken := types.TokenWithBalance{
 						Detail:  tokenList[tokenIndex],
-						Balance: balance.String(),
+						Balance: balance,
 					}
 					filteredTokens = append(filteredTokens, newToken)
 				}

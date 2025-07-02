@@ -2,8 +2,9 @@ package actions
 
 import (
 	"fmt"
+	"math"
+	"math/big"
 
-	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/imduchuyyy/helix-wallet/common"
 	"github.com/imduchuyyy/helix-wallet/keyring"
 	"github.com/imduchuyyy/helix-wallet/types"
@@ -49,18 +50,22 @@ func (a *Action) handleBalance(args []string) (string, error) {
 
 	fmt.Printf("Fetching balances for network: %s\n", chain.Name)
 
-	// address, err := a.keyring.GetEVMAddress()
-	// if err != nil {
-	// 	return "", fmt.Errorf("failed to get EVM address: %w", err)
-	// }
+	address, err := a.keyring.GetEVMAddress()
+	if err != nil {
+		return "", fmt.Errorf("failed to get EVM address: %w", err)
+	}
 
-	tokenWithBalance, err := a.fetchTokenBalances(chain.TokenListURL, chain.Rpcs[0], ethcommon.HexToAddress("0x4fff0f708c768a46050f9b96c46c265729d1a62f"))
+	tokenWithBalance, err := a.fetchTokenBalances(chain.TokenListURL, chain.Rpcs[0], address)
 	if err != nil {
 		return "", fmt.Errorf("failed to fetch token list: %w", err)
 	}
 
 	for _, token := range tokenWithBalance {
-		fmt.Printf("Token: %s, Balance: %s\n", token.Detail.Symbol, token.Balance)
+		decimalBalance := new(big.Float).Quo(
+			new(big.Float).SetInt(token.Balance),
+			new(big.Float).SetFloat64(math.Pow10(int(token.Detail.Decimals))),
+		)
+		fmt.Printf("Token: %s, Balance: %.6f\n", token.Detail.Symbol, decimalBalance)
 	}
 
 	return "", nil

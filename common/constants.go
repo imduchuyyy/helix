@@ -1,6 +1,9 @@
 package common
 
-import "github.com/imduchuyyy/helix-wallet/types"
+import (
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/imduchuyyy/helix-wallet/types"
+)
 
 var CHAIN = map[string]types.Chain{
 	"eth": {
@@ -13,6 +16,8 @@ var CHAIN = map[string]types.Chain{
 		TokenListURL: "https://raw.githubusercontent.com/Uniswap/default-token-list/refs/heads/main/src/tokens/mainnet.json",
 	},
 }
+
+var ZERO_ADDRESS = common.HexToAddress("0x0")
 
 const ERC20ABI = `[
 	{

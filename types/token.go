@@ -1,5 +1,7 @@
 package types
 
+import "math/big"
+
 type Token struct {
 	Name     string `json:"name"`
 	Address  string `json:"address"`
@@ -9,6 +11,6 @@ type Token struct {
 }
 
 type TokenWithBalance struct {
-	Detail  Token  `json:"token"`
-	Balance string `json:"balance"`
+	Detail  Token
+	Balance *big.Int
 }
