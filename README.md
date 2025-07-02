@@ -5,11 +5,12 @@ Entropy wallet, Generate wallets based on your custom entropy. No more scared of
 
 ## ✨ Features
 - Generate wallets from custom entropy
-- Transfer assets
+- Get wallet address, private key, public key
+- Fetch balance on ethereum
 
 ## 🤝 Contributing
 Contributions are welcome! ✨
-Whether you’re a beginner in Rust or experienced dev, feel free to:
+Whether you’re a beginner in go or experienced dev, feel free to:
 - Add support for new chains
 - Improve UX / CLI design
 - Optimize performance or security
