@@ -1,4 +1,6 @@
 # Helix wallet
+[![Build and Test](https://github.com/imduchuyyy/helix-wallet/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/imduchuyyy/helix-wallet/actions/workflows/go.yml)
+
 Entropy wallet, Generate wallets based on your custom entropy. No more scared of losing your seed phrase!
 
 ## ✨ Features
