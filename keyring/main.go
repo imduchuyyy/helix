@@ -20,11 +20,7 @@ func New(entropy string, chain types.Chain) (*Keyring, error) {
 	}, nil
 }
 
-func (k *Keyring) GetAddress() string {
-	return ""
-}
-
-func (k *Keyring) GetEVMAddress() (common.Address, error) {
+func (k *Keyring) GetAddress() (common.Address, error) {
 	seed := crypto.Keccak256([]byte(k.entropy + "evm" + "helix-wallet"))
 
 	privateKey, err := crypto.ToECDSA(seed)
@@ -52,7 +48,7 @@ func (k *Keyring) Commands() []types.Command {
 }
 
 func (k *Keyring) handleGetAddress(args []string) (string, error) {
-	address, err := k.GetEVMAddress()
+	address, err := k.GetAddress()
 	if err != nil {
 		return "", err
 	}

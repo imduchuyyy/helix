@@ -40,13 +40,13 @@ func (a *Action) fetchTokenList(tokenListRpc string) ([]types.Token, error) {
 	return tokenList, nil
 }
 
-func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address ethcommon.Address) ([]types.TokenWithBalance, error) {
-	tokenList, err := a.fetchTokenList(tokenListRpc)
+func (a *Action) fetchTokenBalances(address ethcommon.Address) ([]types.TokenWithBalance, error) {
+	tokenList, err := a.fetchTokenList(a.chain.TokenListURL)
 	if err != nil {
 		return nil, err
 	}
 
-	caller, err := multicall.Dial(context.Background(), rpcUrl)
+	caller, err := multicall.Dial(context.Background(), a.chain.Rpcs[0])
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to multicall RPC: %w", err)
 	}
@@ -80,7 +80,7 @@ func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		client, err := ethclient.Dial(rpcUrl)
+		client, err := ethclient.Dial(a.chain.Rpcs[0])
 		if err != nil {
 			fmt.Println("failed to get ETH client:", err.Error())
 			return
@@ -139,4 +139,8 @@ func (a *Action) fetchTokenBalances(tokenListRpc string, rpcUrl string, address 
 	}
 
 	return filteredTokens, nil
+}
+
+func (a *Action) transferToken() {
+
 }

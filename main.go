@@ -31,9 +31,9 @@ func main() {
 		fmt.Println("Error creating keyring:", err)
 		return
 	}
-	address, err := keyring.GetEVMAddress()
+	address, err := keyring.GetAddress()
 	if err != nil {
-		fmt.Println("Error generating EVM address:", err)
+		fmt.Println("Error generating wallet:", err)
 		return
 	}
 	fmt.Println("Login to Address:", address.Hex())
