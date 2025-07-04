@@ -5,18 +5,19 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/imduchuyyy/helix-wallet/common"
 	"github.com/imduchuyyy/helix-wallet/keyring"
 	"github.com/imduchuyyy/helix-wallet/types"
 )
 
 type Action struct {
 	keyring *keyring.Keyring
+	chain   types.Chain
 }
 
-func New(keyring *keyring.Keyring) *Action {
+func New(keyring *keyring.Keyring, chain types.Chain) *Action {
 	return &Action{
 		keyring: keyring,
+		chain:   chain,
 	}
 }
 
@@ -24,12 +25,12 @@ func (a *Action) Commands() []types.Command {
 	return []types.Command{
 		{
 			Name:        "transfer",
-			Description: "Transfer [amount] of [token] to [address] on [network]",
+			Description: "Transfer [amount] of [token] to [address]",
 			Handler:     a.handleTransfer,
 		},
 		{
 			Name:        "balance",
-			Description: "All balances on [network]. Example: balance eth",
+			Description: "All balances",
 			Handler:     a.handleBalance,
 		},
 	}
@@ -40,22 +41,12 @@ func (a *Action) handleTransfer(args []string) (string, error) {
 }
 
 func (a *Action) handleBalance(args []string) (string, error) {
-	if len(args) < 1 {
-		return "", fmt.Errorf("network argument is required")
-	}
-	chain, ok := common.CHAIN[args[0]]
-	if !ok {
-		return "", fmt.Errorf("network %s not supported", args[0])
-	}
-
-	fmt.Printf("Fetching balances for network: %s\n", chain.Name)
-
 	address, err := a.keyring.GetEVMAddress()
 	if err != nil {
 		return "", fmt.Errorf("failed to get EVM address: %w", err)
 	}
 
-	tokenWithBalance, err := a.fetchTokenBalances(chain.TokenListURL, chain.Rpcs[0], address)
+	tokenWithBalance, err := a.fetchTokenBalances(a.chain.TokenListURL, a.chain.Rpcs[0], address)
 	if err != nil {
 		return "", fmt.Errorf("failed to fetch token list: %w", err)
 	}

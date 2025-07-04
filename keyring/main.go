@@ -10,12 +10,18 @@ import (
 
 type Keyring struct {
 	entropy string
+	chain   types.Chain
 }
 
-func New(entropy string) (*Keyring, error) {
+func New(entropy string, chain types.Chain) (*Keyring, error) {
 	return &Keyring{
 		entropy: entropy,
+		chain:   chain,
 	}, nil
+}
+
+func (k *Keyring) GetAddress() string {
+	return ""
 }
 
 func (k *Keyring) GetEVMAddress() (common.Address, error) {
