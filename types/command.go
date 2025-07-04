@@ -1,6 +1,6 @@
 package types
 
-type CommandHandler func(args []string) (string, error)
+type CommandHandler func(args []string) error
 
 // Command represents a CLI command with its handler and description
 type Command struct {

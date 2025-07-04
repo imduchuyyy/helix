@@ -41,10 +41,10 @@ func NewCli() *Cli {
 	cli.RegisterCommand(types.Command{
 		Name:        "exit",
 		Description: "Exits the application",
-		Handler: func(args []string) (string, error) {
+		Handler: func(args []string) error {
 			fmt.Println("Exiting. Goodbye!")
 			os.Exit(0)
-			return "", nil
+			return nil
 		},
 	})
 	return cli
@@ -93,11 +93,9 @@ func (c *Cli) Run() {
 		cmdName := args[0]
 
 		if cmd, exists := c.commands[cmdName]; exists {
-			output, err := cmd.Handler(args[1:])
+			err := cmd.Handler(args[1:])
 			if err != nil {
 				fmt.Printf("Error: %v\n", err)
-			} else if output != "" {
-				fmt.Println(output)
 			}
 		} else {
 			fmt.Printf("Unknown command: %s. Type 'help' to see available commands.\n", cmdName)
@@ -129,17 +127,19 @@ func (c *Cli) AskEntropy() (string, bool) {
 }
 
 // helpHandler displays help information for all commands
-func (c *Cli) helpHandler(args []string) (string, error) {
+func (c *Cli) helpHandler(args []string) error {
 	if len(args) > 0 {
 		// Help for a specific command
 		cmdName := args[0]
 		if cmd, exists := c.commands[cmdName]; exists {
 			if cmd.Usage != "" {
-				return fmt.Sprintf("%s: %s\nUsage: %s", cmd.Name, cmd.Description, cmd.Usage), nil
+				fmt.Printf("%s: %s\nUsage: %s", cmd.Name, cmd.Description, cmd.Usage)
+				return nil
 			}
-			return fmt.Sprintf("%s: %s", cmd.Name, cmd.Description), nil
+			fmt.Printf("%s: %s", cmd.Name, cmd.Description)
+			return nil
 		}
-		return "", fmt.Errorf("unknown command: %s", cmdName)
+		return fmt.Errorf("unknown command: %s", cmdName)
 	}
 
 	// General help
@@ -159,5 +159,7 @@ func (c *Cli) helpHandler(args []string) (string, error) {
 		helpText.WriteString(fmt.Sprintf("  %-12s - %s\n", name, cmd.Description))
 	}
 
-	return helpText.String(), nil
+	fmt.Println(helpText.String())
+
+	return nil
 }

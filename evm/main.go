@@ -1,12 +1,21 @@
 package evm
 
 type EVMAction struct {
+	// keyring
 	entropy string
+
+	// chain details
+	name         string
+	rpc          string
+	tokenListRpc string
 }
 
-func New(entropy string) EVMAction {
+func New(entropy string, name string, rpc string, tokenListRpc string) EVMAction {
 	return EVMAction{
-		entropy: entropy,
+		entropy:      entropy,
+		name:         name,
+		rpc:          rpc,
+		tokenListRpc: tokenListRpc,
 	}
 }
 
