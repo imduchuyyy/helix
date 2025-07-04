@@ -1,5 +1,7 @@
 package evm
 
+const CHAIN_TYPE = "evm"
+
 type EVMAction struct {
 	// keyring
 	entropy string

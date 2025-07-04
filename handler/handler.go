@@ -11,24 +11,3 @@ func New(action types.Action) *Handler {
 		action: action,
 	}
 }
-
-func (h *Handler) handleGetAddress(args []string) error {
-	address, err := h.action.GetAddress()
-	if err != nil {
-		return err
-	}
-	println("Wallet address:", address)
-	return nil
-}
-
-func (h *Handler) Commands() []types.Command {
-	return []types.Command{
-		{
-			Name:        "get_address",
-			Description: "Get the wallet address",
-			Handler:     h.handleGetAddress,
-			Usage:       "get_address",
-		},
-	}
-
-}

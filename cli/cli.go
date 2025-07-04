@@ -11,42 +11,28 @@ import (
 	"golang.org/x/term"
 )
 
-// CommandHandler represents a function that handles a specific command
-
 // Cli represents the command-line interface
 type Cli struct {
 	scanner    *bufio.Scanner
 	commands   map[string]types.Command
 	prompt     string
 	welcomeMsg string
+
+	action types.Action
 }
 
 // NewCli creates a new CLI instance
-func NewCli() *Cli {
+func NewCli(action types.Action) *Cli {
 	cli := &Cli{
 		scanner:    bufio.NewScanner(os.Stdin),
 		commands:   make(map[string]types.Command),
 		prompt:     "> ",
 		welcomeMsg: "Helix-wallet CLI - \nType 'help' to see available commands.",
+		action:     action,
 	}
 
-	// Register built-in help command
-	cli.RegisterCommand(types.Command{
-		Name:        "help",
-		Description: "Shows available commands",
-		Handler:     cli.helpHandler,
-	})
-
 	// Register built-in exit command
-	cli.RegisterCommand(types.Command{
-		Name:        "exit",
-		Description: "Exits the application",
-		Handler: func(args []string) error {
-			fmt.Println("Exiting. Goodbye!")
-			os.Exit(0)
-			return nil
-		},
-	})
+	cli.registerCommands(cli.Commands())
 	return cli
 }
 
@@ -60,7 +46,7 @@ func (c *Cli) SetWelcomeMessage(msg string) {
 	c.welcomeMsg = msg
 }
 
-func (c *Cli) RegisterCommand(cmd types.Command) {
+func (c *Cli) registerCommand(cmd types.Command) {
 	if _, exists := c.commands[cmd.Name]; exists {
 		fmt.Printf("Warning: Command '%s' is already registered and will be overwritten.\n", cmd.Name)
 	}
@@ -68,9 +54,9 @@ func (c *Cli) RegisterCommand(cmd types.Command) {
 }
 
 // RegisterCommand adds a new command to the CLI
-func (c *Cli) RegisterCommands(cmds []types.Command) {
+func (c *Cli) registerCommands(cmds []types.Command) {
 	for _, cmd := range cmds {
-		c.RegisterCommand(cmd)
+		c.registerCommand(cmd)
 	}
 }
 

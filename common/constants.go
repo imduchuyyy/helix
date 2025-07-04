@@ -6,6 +6,8 @@ import (
 
 var ZERO_ADDRESS = common.HexToAddress("0x0")
 
+const WALLET_POSTFIX = "helix-wallet"
+
 const ERC20ABI = `[
 	{
 		"constant":true,

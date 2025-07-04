@@ -5,27 +5,42 @@ import (
 	"os"
 
 	"github.com/imduchuyyy/helix-wallet/cli"
-	"github.com/imduchuyyy/helix-wallet/common"
-	"github.com/imduchuyyy/helix-wallet/handler"
+	"github.com/imduchuyyy/helix-wallet/evm"
+	"github.com/imduchuyyy/helix-wallet/types"
 )
+
+var CHAIN = map[string]func(entropy string) types.Action{
+	"eth": func(entropy string) types.Action {
+		return evm.New(entropy, "Ethereum", "https://eth.llamarpc.com", "https://raw.githubusercontent.com/Uniswap/default-token-list/refs/heads/main/src/tokens/mainnet.json")
+	},
+}
+
+func askEntropy() (string, bool) {
+	var entropy string
+	fmt.Print("Enter entropy: ")
+	_, err := fmt.Scanln(&entropy)
+	if err != nil || entropy == "" {
+		fmt.Println("Invalid entropy input. Please try again.")
+		return "", false
+	}
+	return entropy, true
+}
 
 func main() {
 	chainDenote := os.Getenv("CHAIN")
-	app := cli.NewCli()
-	app.SetPrompt("Enter entropy to generate wallet > ")
-	entropy, ok := app.AskEntropy()
+	genActionFunc, exists := CHAIN[chainDenote]
+	if !exists {
+		fmt.Println("Invalid or missing CHAIN environment variable. Please set it to a valid chain name (e.g., 'eth').")
+		return
+	}
+	entropy, ok := askEntropy()
 	if !ok {
 		return
 	}
-	action, ok := common.GetChainAction(chainDenote, entropy)
-	handler := handler.New(action)
-	if !ok {
-		fmt.Println("Invalid chain specified. Please set the CHAIN environment variable to a valid chain name.")
-		return
-	}
+	action := genActionFunc(entropy)
+	app := cli.NewCli(action)
 	fmt.Println("Using chain:", action.ChainName())
 	app.SetPrompt("Helix > ")
-	app.RegisterCommands(handler.Commands())
 
 	app.Run()
 }
