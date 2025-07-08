@@ -3,27 +3,30 @@ package main
 import (
 	"fmt"
 	"os"
+	"syscall"
 
 	"github.com/imduchuyyy/helix-wallet/cli"
 	"github.com/imduchuyyy/helix-wallet/evm"
 	"github.com/imduchuyyy/helix-wallet/types"
+	"golang.org/x/term"
 )
 
-var CHAIN = map[string]func(entropy string) types.Action{
-	"eth": func(entropy string) types.Action {
+var CHAIN = map[string]func(entropy string) (types.Action, error){
+	"eth": func(entropy string) (types.Action, error) {
 		return evm.New(entropy, "Ethereum", "https://eth.llamarpc.com", "https://raw.githubusercontent.com/Uniswap/default-token-list/refs/heads/main/src/tokens/mainnet.json")
 	},
 }
 
 func askEntropy() (string, bool) {
-	var entropy string
 	fmt.Print("Enter entropy: ")
-	_, err := fmt.Scanln(&entropy)
-	if err != nil || entropy == "" {
-		fmt.Println("Invalid entropy input. Please try again.")
+	// Read password without echoing to terminal
+	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+	if err != nil || len(bytePassword) == 0 {
+		fmt.Println("\nInvalid entropy input. Please try again.")
 		return "", false
 	}
-	return entropy, true
+	fmt.Println() // Add a newline after password input
+	return string(bytePassword), true
 }
 
 func main() {
@@ -37,7 +40,11 @@ func main() {
 	if !ok {
 		return
 	}
-	action := genActionFunc(entropy)
+	action, err := genActionFunc(entropy)
+	if err != nil {
+		fmt.Println("Error initializing action:", err)
+		return
+	}
 	app := cli.NewCli(action)
 	fmt.Println("Using chain:", action.ChainName())
 	app.SetPrompt("Helix > ")

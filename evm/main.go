@@ -1,5 +1,11 @@
 package evm
 
+import (
+	"fmt"
+
+	"github.com/ethereum/go-ethereum/ethclient"
+)
+
 const CHAIN_TYPE = "evm"
 
 type EVMAction struct {
@@ -10,15 +16,24 @@ type EVMAction struct {
 	name         string
 	rpc          string
 	tokenListRpc string
+
+	// client
+	ethClient *ethclient.Client
 }
 
-func New(entropy string, name string, rpc string, tokenListRpc string) EVMAction {
+func New(entropy string, name string, rpc string, tokenListRpc string) (EVMAction, error) {
+	client, err := ethclient.Dial(rpc)
+	if err != nil {
+		fmt.Println("failed to get ETH client:", err.Error())
+		return EVMAction{}, fmt.Errorf("failed to connect to Ethereum client: %w", err)
+	}
 	return EVMAction{
 		entropy:      entropy,
 		name:         name,
 		rpc:          rpc,
+		ethClient:    client,
 		tokenListRpc: tokenListRpc,
-	}
+	}, nil
 }
 
 // func (a *Action) handleTransfer(args []string) (string, error) {
