@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"syscall"
 
 	"github.com/imduchuyyy/helix-wallet/types"
-	"golang.org/x/term"
 )
 
 // Cli represents the command-line interface
@@ -87,29 +85,6 @@ func (c *Cli) Run() {
 			fmt.Printf("Unknown command: %s. Type 'help' to see available commands.\n", cmdName)
 		}
 	}
-}
-
-func (c *Cli) AskEntropy() (string, bool) {
-	fmt.Println("Please enter entropy for your wallet (random text used for wallet generation):")
-	fmt.Print(c.prompt)
-
-	// Use terminal.ReadPassword to hide input
-	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		fmt.Println("\nError reading input:", err)
-		return "", false
-	}
-
-	// Print newline after input
-	fmt.Println()
-
-	input := strings.TrimSpace(string(bytePassword))
-	if input == "" {
-		fmt.Println("Entropy cannot be empty")
-		return "", false
-	}
-
-	return input, true
 }
 
 // helpHandler displays help information for all commands
