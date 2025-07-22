@@ -1,0 +1,16 @@
+{
+  "name": "helix-wallet",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "bun-promptx": "^0.2.0",
+    "viem": "^2.33.0"
+  }
+}
