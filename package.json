@@ -10,7 +10,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "bun-promptx": "^0.2.0",
+    "@types/prompts": "^2.4.9",
+    "prompts": "^2.4.2",
     "viem": "^2.33.0"
   }
 }

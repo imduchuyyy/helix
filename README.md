@@ -1,15 +1,17 @@
-# helix-wallet
+# Helix wallet
 
-To install dependencies:
+Entropy wallet, Generate wallets based on your custom entropy. No more scared of losing your seed phrase!
 
-```bash
-bun install
-```
+## ✨ Features
+- Generate wallets from custom entropy
+- Get wallet address, private key, public key
+- Fetch balance on ethereum
 
-To run:
+## 🤝 Contributing
+Contributions are welcome! ✨
+Whether you’re a beginner or experienced dev, feel free to:
+- Add support for new chains
+- Improve UX / CLI design
+- Optimize performance or security
+- Refactor modules or improve documentation
 
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.5. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
