@@ -1,5 +1,5 @@
 {
-  "name": "ts",
+  "name": "helix-wallet",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -10,6 +10,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "viem": "^2.31.6"
+    "@types/prompts": "^2.4.9",
+    "prompts": "^2.4.2",
+    "viem": "^2.33.0"
   }
 }
