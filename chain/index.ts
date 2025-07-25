@@ -1,6 +1,5 @@
 import * as chains from "viem/chains";
-import { Action } from "../action";
-import { EVM } from "../evm";
+import { EVM, Action } from "../action";
 
 export const genChainInstance = (chainName: string): (entropy: string) => Action => {
   // TODO: support more chain type

@@ -1,4 +1,4 @@
-import { Action } from "../action";
+import { Action } from "../action/base";
 import { ICommand } from "../types";
 import prompts from "prompts";
 
