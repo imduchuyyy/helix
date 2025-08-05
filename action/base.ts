@@ -1,4 +1,3 @@
-import { formatUnits } from "viem";
 import type { ITokenBalance } from "../types/token";
 
 export abstract class Action {
@@ -45,9 +44,23 @@ export abstract class Action {
         }
       },
       usage: "chainName"
+    },
+    {
+      name: "privatekey",
+      description: "Get the private key of the account",
+      handler: async () => {
+        const privateKey = this.getPrivateKey();
+        if (!privateKey) {
+          throw new Error("Private key not found. Ensure the account is initialized.");
+        }
+
+        console.log(`Private Key: ${privateKey}`);
+      },
+      usage: "privatekey"
     }
   ]
 
+  abstract getPrivateKey(): string;
   abstract fetchTokenBalances(): Promise<ITokenBalance[]>;
   abstract getAddress(): string;
   abstract chainName(): string;

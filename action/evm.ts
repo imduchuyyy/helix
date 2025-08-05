@@ -8,12 +8,15 @@ import axios from "axios";
 
 export class EVM extends Action {
   private name: string;
+  private entropy: string;
   private client: PublicClient;
   private account: Account;
+  private balances: ITokenBalance[] = [];
 
   constructor(entropy: string, name: string) {
     super();
     this.name = name;
+    this.entropy = entropy;
     this.client = createPublicClient({
       chain: (chains as any)[name],
       transport: http()
@@ -36,6 +39,10 @@ export class EVM extends Action {
 
   formatBalance(balance: bigint, decimals: number): string {
     return parseFloat(formatUnits(balance, decimals)).toFixed(4);
+  }
+
+  getPrivateKey(): string {
+    return this.generatePrivateKeyFromEntropy(this.entropy);
   }
 
   async fetchTokenBalances(): Promise<ITokenBalance[]> {
@@ -89,6 +96,8 @@ export class EVM extends Action {
       }
     }
 
-    return tokenBalances;
+    this.balances = tokenBalances;
+
+    return this.balances;
   }
 }
