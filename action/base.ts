@@ -1,3 +1,4 @@
+import { formatUnits } from "viem";
 import type { ITokenBalance } from "../types/token";
 
 export abstract class Action {
@@ -40,8 +41,7 @@ export abstract class Action {
 
         console.log("Token Balances:");
         for (const balance of balances) {
-          const decimalBalance = balance.balance / BigInt(10 ** balance.tokenDecimals);
-          console.log(`- ${balance.tokenName} (${balance.tokenSymbol}): ${decimalBalance}`);
+          console.log(`- ${balance.tokenName} (${balance.tokenSymbol}): ${balance.formattedBalance}`);
         }
       },
       usage: "chainName"

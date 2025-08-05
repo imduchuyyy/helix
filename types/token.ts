@@ -4,4 +4,5 @@ export interface ITokenBalance {
   tokenSymbol: string;
   tokenDecimals: number;
   balance: bigint;
+  formattedBalance?: string; // Optional formatted balance for display
 }
